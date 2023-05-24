@@ -82,15 +82,9 @@ class List {
         return last.value;
     }
     *[(_first = new WeakMap(), _last = new WeakMap(), Symbol.iterator)]() {
-        if (this.isEmpty) {
-            return;
+        for (let currentNode = __classPrivateFieldGet(this, _first); currentNode !== null; currentNode = currentNode.next) {
+            yield currentNode.value;
         }
-        let temp = __classPrivateFieldGet(this, _first);
-        while (temp.next !== null) {
-            yield temp.value;
-            temp = temp.next;
-        }
-        yield temp.value;
     }
 }
 exports.List = List;

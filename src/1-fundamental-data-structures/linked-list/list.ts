@@ -79,18 +79,13 @@ export class List<T = unknown> implements IList<T> {
         return last.value;
     }
 
-    *[Symbol.iterator]() {
-        if (this.isEmpty) {
-            return;
+    *[Symbol.iterator](): IterableIterator<T> {
+        for (
+            let currentNode = this.#first;
+            currentNode !== null;
+            currentNode = currentNode.next
+        ) {
+            yield currentNode.value;
         }
-
-        let temp = this.#first!;
-
-        while (temp.next !== null) {
-            yield temp.value;
-            temp = temp.next;
-        }
-
-        yield temp.value;
     }
 }
