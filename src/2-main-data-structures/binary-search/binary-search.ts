@@ -1,7 +1,7 @@
 export function binarySearch(value: number, array: number[]): number {
     let left = 0;
     let right = array.length - 1;
-    
+
     while (left <= right) {
         const index = Math.floor((left + right) / 2);
 
