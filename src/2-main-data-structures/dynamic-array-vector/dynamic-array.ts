@@ -26,9 +26,9 @@ export class DynamicArray<T = unknown> implements IDynamicArray<T> {
     push(value: T): void {
         if (this.#length === this.#capacity) {
             this.#capacity *= 2;
-            let newArray = new Array(this.#capacity);
+            const newArray = new Array(this.#capacity);
 
-            for (let i = 0; i < newArray.length; i++) {
+            for (let i = 0; i < this.#length; i++) {
                 newArray[i] = this.#array[i];
             }
 
