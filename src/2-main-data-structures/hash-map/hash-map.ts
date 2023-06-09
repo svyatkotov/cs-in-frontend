@@ -13,18 +13,18 @@ export class HashMap<T = unknown, K = number | string> implements IHashMap<T, K>
     }
 
     get(key: KeyType<K>): Optional<T> {
-        const index = this.getIndex(key, this.#arrayCapacity);
-        let element = this.#array[index];
+        const index = this.getIndex(key);
+        const element = this.#array[index];
 
         if (element instanceof LinkedList) {
-            for (const nodeValue of this.#array[index] as LinkedList<ValueType<T, K>>) {
+            for (const nodeValue of element as LinkedList<ValueType<T, K>>) {
                 if (nodeValue.key === key) {
-                    element = nodeValue;
+                    return nodeValue.value;
                 }
             }
+        } else if (key === (element as ValueType<T, K>)?.key) {
+            return (element as ValueType<T, K>).value;
         }
-
-        return (element as ValueType<T, K>).value;
     }
 
     set(key: KeyType<K>, value: T): void {
@@ -32,7 +32,7 @@ export class HashMap<T = unknown, K = number | string> implements IHashMap<T, K>
             this.rehash();
         }
 
-        const index = this.getIndex(key, this.#arrayCapacity);
+        const index = this.getIndex(key);
         const element = this.#array[index];
 
         if (element instanceof LinkedList) {
@@ -73,17 +73,13 @@ export class HashMap<T = unknown, K = number | string> implements IHashMap<T, K>
             }
 
             if (element instanceof LinkedList) {
-                for (const nodeValue of element) {
-                    yield {
-                        key: nodeValue.key,
-                        value: nodeValue.value,
-                    };
+                for (const { key, value } of element) {
+                    yield { key, value };
                 }
             } else {
-                yield {
-                    key: (this.#array[i] as ValueType<T, K>).key,
-                    value: (this.#array[i] as ValueType<T, K>).value,
-                };
+                const { key, value } = element;
+
+                yield { key, value };
             }
         }
     }
@@ -96,8 +92,7 @@ export class HashMap<T = unknown, K = number | string> implements IHashMap<T, K>
         const entries = [...this.entries()];
         this.#array = new Array(newCapacity);
         this.#arrayCapacity = newCapacity;
-        this.#arrayLength = 0;
-        
+
         for (const { key, value } of entries) {
             this.set(key, value);
         }
@@ -111,10 +106,10 @@ export class HashMap<T = unknown, K = number | string> implements IHashMap<T, K>
         return num > 1;
     }
 
-    private getIndex(key: KeyType<K>, capacity: number): number {
+    private getIndex(key: KeyType<K>): number {
         const keyStr = key.toString();
         const hash = keyStr.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const index = hash % capacity;
+        const index = hash % this.#arrayCapacity;
 
         return index;
     }
