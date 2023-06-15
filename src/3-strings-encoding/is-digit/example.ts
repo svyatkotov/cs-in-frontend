@@ -1,4 +1,4 @@
-import { isDigit } from "./is-digit"
+import { isDigit } from "./is-digit";
 
 console.log(isDigit('123'));    // true
 console.log(isDigit('Ⅻ'));     // true
