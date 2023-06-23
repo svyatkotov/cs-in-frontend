@@ -6,7 +6,7 @@ export interface IList<T> {
     addLeft(value: T): void;
     removeRight(): T;
     removeLeft(): T;
-    [Symbol.iterator](): IterableIterator<T>;
+    values(): IterableIterator<T>;
 }
 
 export interface INode<T> {

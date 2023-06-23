@@ -79,13 +79,27 @@ export class List<T = unknown> implements IList<T> {
         return last.value;
     }
 
-    *[Symbol.iterator](): IterableIterator<T> {
-        for (
-            let currentNode = this.#first;
-            currentNode !== null;
-            currentNode = currentNode.next
-        ) {
-            yield currentNode.value;
-        }
+    values(): IterableIterator<T> {
+        return this[Symbol.iterator]();
+    }
+
+    [Symbol.iterator](): IterableIterator<T> {
+        let currentNode = this.#first;
+
+        return {
+            [Symbol.iterator](): IterableIterator<T> {
+                return this;
+            },
+            next(): IteratorResult<T> {
+                if (currentNode !== null) {
+                    const value = currentNode.value;
+                    currentNode = currentNode.next;
+
+                    return { value, done: false };
+                }
+
+                return { value: undefined, done: true };
+            },
+        };
     }
 }

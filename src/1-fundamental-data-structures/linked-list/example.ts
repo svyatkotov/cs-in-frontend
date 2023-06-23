@@ -23,5 +23,14 @@ console.log(list.first?.next?.prev?.value); // 5
 
 console.log('Iteration');
 for (let value of list) {
-    console.log(value); // 5, 6
+    console.log(value);  // 5, 6
 }
+
+console.log([...list]);  // [ 5, 6 ]
+
+const iter = list.values();
+console.log(iter.next());  // { value: 5, done: false }
+console.log(iter.next());  // { value: 6, done: false }
+console.log(iter.next());  // { value: undefined, done: true }
+console.log(iter.next());  // { value: undefined, done: true }
+console.log(iter.next());  // { value: undefined, done: true }
