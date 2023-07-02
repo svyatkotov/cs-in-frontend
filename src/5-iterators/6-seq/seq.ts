@@ -7,7 +7,7 @@ export function seq<T>(...args: Iterable<T>[]): IterableIterator<T> {
             return this;
         },
 
-        next() {
+        next(): IteratorResult<T> {
             if (currentIterator) {
                 const res = currentIterator.next();
 

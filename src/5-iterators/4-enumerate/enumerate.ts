@@ -7,14 +7,14 @@ export function enumerate<T>(iterable: Iterable<T>): IterableIterator<[number, T
             return this;
         },
 
-        next() {
+        next(): IteratorResult<[number, T]> {
             const res = iterator.next();
 
             if (!res.done) {
                 return { done: false, value: [cursor++, res.value] };
             }
 
-            return res;
+            return { done: true, value: undefined };
         },
     };
 }

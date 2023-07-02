@@ -7,7 +7,7 @@ export function take<T>(iterable: Iterable<T>, count: number): IterableIterator<
             return this;
         },
 
-        next() {
+        next(): IteratorResult<T> {
             if (cursor++ < count) {
                 return iterator.next();
             }

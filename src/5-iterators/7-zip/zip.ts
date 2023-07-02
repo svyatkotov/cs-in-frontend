@@ -6,7 +6,7 @@ export function zip<T>(...args: Iterable<T>[]): IterableIterator<T[]> {
             return this;
         },
 
-        next() {
+        next(): IteratorResult<T[]> {
             const value = [];
 
             for (const iterator of iterators) {
