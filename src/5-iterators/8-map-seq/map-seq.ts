@@ -7,9 +7,13 @@ export function mapSeq<T>(iterable: Iterable<T>, functions: Function[]): Iterabl
         },
 
         next(): IteratorResult<unknown> {
-            const res = iterator.next();
+            let res = iterator.next();
 
             if (res.done) return { done: true, value: undefined };
+
+            for (const fn of functions) {
+                res = fn(res);
+            }
 
             return { done: false, value: res.value };
         }
