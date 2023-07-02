@@ -8,7 +8,7 @@ export function seq<T>(...args: Iterable<T>[]): IterableIterator<T> {
         },
 
         next() {
-            if (cursor < args.length) {
+            if (currentIterator) {
                 const res = currentIterator.next();
 
                 if (res.done) {
