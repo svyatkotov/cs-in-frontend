@@ -1,4 +1,4 @@
-export function seq<T>(...args: Iterable<T>[]): IterableIterator<T> {
+export function seq(...args: Iterable<unknown>[]): IterableIterator<unknown> {
     let cursor = 0;
     let currentIterator = args[cursor]?.[Symbol.iterator]();
 
@@ -7,20 +7,21 @@ export function seq<T>(...args: Iterable<T>[]): IterableIterator<T> {
             return this;
         },
 
-        next(): IteratorResult<T> {
-            if (currentIterator) {
-                const res = currentIterator.next();
+        next(): IteratorResult<unknown> {
+            while (true) {
+                if (currentIterator) {
+                    const res = currentIterator.next();
 
-                if (res.done) {
-                    currentIterator = args[++cursor]?.[Symbol.iterator]();
+                    if (res.done) {
+                        currentIterator = args[++cursor]?.[Symbol.iterator]();
+                        continue;
+                    }
 
-                    return this.next();
+                    return res;
                 }
 
-                return res;
+                return { done: true, value: undefined };
             }
-
-            return { done: true, value: undefined };
         },
     };
 }

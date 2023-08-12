@@ -7,13 +7,13 @@ export function filter<T>(iterable: Iterable<T>, predicate: (el: T) => boolean):
         },
 
         next() {
-            const res = iterator.next();
+            let res = iterator.next();
 
-            if (predicate(res.value) || res.done) {
-                return res;
+            while (!predicate(res.value) && !res.done) {
+                res = iterator.next();
             }
 
-            return this.next();
+            return res;
         },
     };
 }

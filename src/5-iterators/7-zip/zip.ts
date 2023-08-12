@@ -1,5 +1,5 @@
 export function zip<T>(...args: Iterable<T>[]): IterableIterator<T[]> {
-    const iterators = new Set(args.map(iterable => iterable[Symbol.iterator]()));
+    const iterators = args.map(iterable => iterable[Symbol.iterator]());
 
     return {
         [Symbol.iterator]() {
@@ -7,20 +7,19 @@ export function zip<T>(...args: Iterable<T>[]): IterableIterator<T[]> {
         },
 
         next(): IteratorResult<T[]> {
+            if (iterators.length === 0) return { done: true, value: undefined };
+
             const value = [];
 
             for (const iterator of iterators) {
                 const res = iterator.next();
 
-                if (res.done) {
-                    iterators.delete(iterator);
-                    continue;
-                }
+                if (res.done) return res;
 
                 value.push(res.value);
             }
 
-            return iterators.size === 0 ? { done: true, value: undefined } : { value, done: false };
+            return { value, done: false };
         },
     };
 }
