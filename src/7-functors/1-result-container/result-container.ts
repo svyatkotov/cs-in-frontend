@@ -1,16 +1,20 @@
 type State = 'ok' | 'error';
 type Data<T> = T | Result<T>;
 
+function cast<T>(value: any): T {
+    return value;
+}
+
 export class Result<T> {
-    protected state: State;
+    readonly state: State;
     protected readonly data?: T;
     protected readonly error?: Error;
 
-    constructor(data: () => Data<T>) {
+    constructor(executor: () => Data<T>, unpack: boolean = true) {
         try {
-            const d = data();
+            const data = executor();
 
-            this.data = d instanceof Result ? d.unwrap() : d;
+            this.data = unpack && data instanceof Result ? data.unwrap() : cast(data);
             this.state = 'ok';
         } catch (err: any) {
             this.state = 'error';
@@ -18,10 +22,14 @@ export class Result<T> {
         }
     }
 
-    static error<T>(data: T): Result<T> {
+    static error<T>(data: T): Result<undefined> {
         return new Result(() => {
             throw new Error(`Error occurred with value ${data}`);
         });
+    }
+
+    static ok<T>(data: Data<T>): Result<T> {
+        return new Result(() => data);
     }
 
     unwrap(): T | undefined {
@@ -32,30 +40,30 @@ export class Result<T> {
         return this.data;
     }
 
-    map(cb: (data: T) => T) {
+    map<K>(executor: (data: T) => K): Result<K> {
         return new Result(() => {
             if (this.state === 'error') {
                 throw this.error;
             }
 
-            return cb(this.data!);
-        });
+            return executor(this.data!);
+        }, false);
     }
 
-    flatMap(cb: (data: T) => Result<T>): Result<T> {
+    flatMap<R>(executor: (data: T) => Result<R>): Result<R> {
         return new Result(() => {
             if (this.state === 'error') {
                 throw this.error;
             }
 
-            return cb(this.data!);
+            return executor(this.data!);
         });
-    }
+     }
 
-    catch(cb: (err: Error) => void) {
+    catch(handler: (err: Error) => void): Result<T> {
         return new Result(() => {
             if (this.state === 'error') {
-                cb(this.error!);
+                handler(this.error!);
             }
 
             return this.data!;
